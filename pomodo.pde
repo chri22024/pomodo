@@ -1,10 +1,8 @@
-
-
-void setup(){
-    size(400, 400);
+Ball b;
+void setup() {
+  size(400, 400);
+  b = new Ball();
 }
-
-
-void draw(){
-
+void draw() {
+  b.display();
 }
