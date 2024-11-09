@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Animation</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #imageContainer {
+      position: absolute;
+      transition: transform 0.5s ease;
+    }
+    #imageContainer.right {
+      transform: translateX(100px);
+    }
+  </style>
+</head>
+<body>
+  <div id="imageContainer">
+    <img id="animatedImage" src="pictures/1.jpg" alt="Animated Image" width="300">
+  </div>
+
+  <script>
+    const images = [
+      'pictures/1.jpg', 'pictures/2.jpg', 'pictures/3.jpg', 'pictures/4.jpg',
+      'pictures/5.jpg', 'pictures/6.jpg', 'pictures/7.jpg', 'picctures/8.jpg'
+    ];
+    let currentIndex = 0;
+
+    function changeImage() {
+      const img = document.getElementById('animatedImage');
+      img.src = images[currentIndex];
+      currentIndex++;
+
+      if (currentIndex === images.length) {
+        document.getElementById('imageContainer').classList.add('right');
+      } else if (currentIndex < images.length) {
+        setTimeout(changeImage, 500);
+      }
+    }
+
+    window.onload = function() {
+      setTimeout(changeImage, 500);
+    };
+  </script>
+</body>
+</html>
