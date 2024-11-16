@@ -17,7 +17,7 @@
             height: 100%;
             overflow: hidden;
             text-align: center;
-            transfor: scale(0.8)
+            transfor: scale(0.8);
         }
 
         #slideshow-image {
@@ -28,12 +28,20 @@
         }
 
         #content {
-            display: none;
+            display: block;
             position: absolute;
             top: 50%;
             left: 20%;
             transform: translateY(-50%);
             text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 1s;
+        }
+
+        #content-isActive{
+            opacity: 1;
+            visibility: visible;
         }
 
         #pomodo-title {
@@ -48,7 +56,6 @@
             width: 80%;
             max-width: 600px;
         }
-
         .question {
             margin-bottom: 20px;
         }
@@ -151,6 +158,8 @@
         function shiftImageRight() {
             const imageContainer = document.getElementById('image-container');
             const slideshowImage = document.getElementById('slideshow-image');
+            const contentElement = document.getElementById('content');
+
             let position = 0; 
 
             function moveRight() {
@@ -164,8 +173,8 @@
             }
             moveRight();
             document.getElementById('image-container').style.textAlign = 'center';
-            document.getElementById('content').style.display = 'block';
-         
+            contentElement.classList.add('content-isActive');
+            //document.getElementById('content').style.display = 'block';
         }
 
         // 「はじめる」ボタンのクリックイベント
