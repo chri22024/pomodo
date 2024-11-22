@@ -8,36 +8,33 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            /* font-family: Arial, sans-serif; */
         }
 
-        /* 画像スライドショーのスタイル */
         #image-container {
             position: relative;
             width: 100%;
-            height: 100%;
+            height: 100vh;
             overflow: hidden;
             text-align: center;
-            transfor: scale(0.8);
         }
 
         #slideshow-image {
             max-width: 50%;
             max-height: 100%;
-            transition: transform 0.6s ease;
+            transition: 0.6s ease;
             transform: scale(0.8);
         }
 
-        /* コンテンツのスタイル */
         #content {
             position: absolute;
-            top: 50%;
-            left: 20%;
+            top: 45%;
+            left: 20%; /* 距離を調整 */
             transform: translateY(-50%);
             text-align: center;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 1s ease;
+            transition: all 1s;
         }
 
         /* フェードイン時のスタイル */
@@ -49,10 +46,9 @@
         #pomodo-title {
             font-size: 100px;
             margin-bottom: 20px;
-            font-family: Impact, sans-serif;
+            font-family: Impact;
         }
 
-        /* 質問フォームのスタイル */
         #form-container {
             display: none;
             margin: 100px auto;
@@ -66,15 +62,30 @@
 
         #start-work-button {
             display: none;
-            margin-top: 30px;
+            margin: 30px auto 0 auto; /* ボタンを中央に配置 */
+            display: block;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
         }
 
         /* タイマー画面のスタイル */
         #timer-container {
             display: none;
-            text-align: center;
-            margin-top: 50px;
+            width: 100%;
+            height: 100vh;
             position: relative;
+            text-align: center;
+        }
+
+        #timer-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         /* 円形プログレスバーのスタイル */
@@ -147,12 +158,6 @@
             z-index: 999;
         }
 
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
         input[type="number"] {
             width: 50px;
             margin-left: 10px;
@@ -178,19 +183,19 @@
         <!-- 質問フォーム（仮の内容） -->
         <div class="question">
             <p>質問1: 睡眠時間は何時間ですか？</p>
-            <input type="number" id="answer1">
+            <input type="text" id="answer1">
         </div>
         <div class="question">
-            <p>質問2: 作業に必要な集中度は？（1〜5）</p>
-            <input type="number" id="answer2">
+            <p>質問2: ここに質問</p>
+            <input type="text" id="answer2">
         </div>
         <div class="question">
-            <p>質問3: 現在の疲労度は？（1〜5）</p>
-            <input type="number" id="answer3">
+            <p>質問3: ここに質問</p>
+            <input type="text" id="answer3">
         </div>
         <div class="question">
-            <p>質問4: タスクの締め切りまでの時間は？（時間）</p>
-            <input type="number" id="answer4">
+            <p>質問4: ここに質問</p>
+            <input type="text" id="answer4">
         </div>
 
         <!-- 「作業を開始する」ボタン -->
@@ -200,12 +205,14 @@
     <!-- タイマー画面のコンテナ -->
     <div id="timer-container">
         <button id="settings-button">設定</button>
-        <div class="progress-circle">
-            <svg width="200" height="200">
-                <circle class="progress-bg" cx="100" cy="100" r="90"></circle>
-                <circle class="progress-bar" cx="100" cy="100" r="90" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
-            </svg>
-            <div id="timer-text">10:00</div>
+        <div id="timer-content">
+            <div class="progress-circle">
+                <svg width="200" height="200">
+                    <circle class="progress-bg" cx="100" cy="100" r="90"></circle>
+                    <circle class="progress-bar" cx="100" cy="100" r="90" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
+                </svg>
+                <div id="timer-text">10:00</div>
+            </div>
         </div>
     </div>
 
@@ -230,7 +237,7 @@
         // JavaScriptコード
 
         // 画像のパスを配列で定義（実際の画像パスに置き換えてください）
-        const images = [
+        var images = [
             'pictures/1.jpg',
             'pictures/2.jpg',
             'pictures/3.jpg',
@@ -241,31 +248,30 @@
             'pictures/8.jpg'
         ];
 
-        // グローバル変数の定義
-        let currentImageIndex = 0;
-        const slideshowImage = document.getElementById('slideshow-image');
-        const content = document.getElementById('content');
-        const startButton = document.getElementById('start-button');
-        const formContainer = document.getElementById('form-container');
-        const startWorkButton = document.getElementById('start-work-button');
-        const timerContainer = document.getElementById('timer-container');
-        const timerText = document.getElementById('timer-text');
-        const progressBar = document.querySelector('.progress-bar');
-        const settingsButton = document.getElementById('settings-button');
-        const settingsModal = document.getElementById('settings-modal');
-        const modalOverlay = document.getElementById('modal-overlay');
-        const saveSettingsButton = document.getElementById('save-settings-button');
-        const workDurationInput = document.getElementById('work-duration');
-        const breakDurationInput = document.getElementById('break-duration');
+        var currentImageIndex = 0;
+        var slideshowImage = document.getElementById('slideshow-image');
+        var content = document.getElementById('content');
+        var startButton = document.getElementById('start-button');
+        var formContainer = document.getElementById('form-container');
+        var startWorkButton = document.getElementById('start-work-button');
+        var timerContainer = document.getElementById('timer-container');
+        var timerText = document.getElementById('timer-text');
+        var progressBar = document.querySelector('.progress-bar');
+        var settingsButton = document.getElementById('settings-button');
+        var settingsModal = document.getElementById('settings-modal');
+        var modalOverlay = document.getElementById('modal-overlay');
+        var saveSettingsButton = document.getElementById('save-settings-button');
+        var workDurationInput = document.getElementById('work-duration');
+        var breakDurationInput = document.getElementById('break-duration');
 
         // デフォルトのタイマー設定
-        let workDuration = 10; // 分
-        let breakDuration = 5; // 分
+        var workDuration = 10; // 分
+        var breakDuration = 5; // 分
 
         // スライドショーを開始する関数
         function startSlideshow() {
             slideshowImage.src = images[currentImageIndex];
-            const slideshowInterval = setInterval(function() {
+            var slideshowInterval = setInterval(function() {
                 currentImageIndex++;
                 if (currentImageIndex < images.length) {
                     slideshowImage.src = images[currentImageIndex];
@@ -273,14 +279,13 @@
                     clearInterval(slideshowInterval);
                     shiftImageRight();
                 }
-            }, 500); // 0.5秒ごとに画像を切り替え
+            }, 450);
         }
 
         // 画像を右側に寄せてコンテンツを表示
         function shiftImageRight() {
-            const imageContainer = document.getElementById('image-container');
             slideshowImage.style.transition = 'transform 1s ease';
-            slideshowImage.style.transform = 'translateX(50%)';
+            slideshowImage.style.transform = 'translateX(28%) scale(0.8)'; // 移動量を調整
 
             // 画像の移動が完了したらコンテンツをフェードイン
             setTimeout(function() {
@@ -295,14 +300,14 @@
         });
 
         // フォームの入力チェック
-        const inputs = formContainer.getElementsByTagName('input');
-        for (let i = 0; i < inputs.length; i++) {
+        var inputs = formContainer.getElementsByTagName('input');
+        for (var i = 0; i < inputs.length; i++) {
             inputs[i].addEventListener('input', checkFormCompletion);
         }
 
         function checkFormCompletion() {
-            let allFilled = true;
-            for (let i = 0; i < inputs.length; i++) {
+            var allFilled = true;
+            for (var i = 0; i < inputs.length; i++) {
                 if (inputs[i].value === '') {
                     allFilled = false;
                     break;
@@ -321,9 +326,14 @@
             workDuration = parseInt(workDurationInput.value) || 10;
             breakDuration = parseInt(breakDurationInput.value) || 5;
 
+            // フォームを隠す
+            formContainer.style.display = 'none';
+
             // タイマー画面を表示
             timerContainer.style.display = 'block';
             settingsButton.style.display = 'block';
+
+            // タイマー画面にスクロール
             timerContainer.scrollIntoView({ behavior: 'smooth' });
 
             // 作業タイマーを開始
@@ -331,10 +341,10 @@
         });
 
         // タイマー機能
-        let timerInterval;
+        var timerInterval;
 
         function startTimer(duration, mode) {
-            let timeRemaining = duration;
+            var timeRemaining = duration;
             updateTimerDisplay(timeRemaining);
             updateProgressBar(timeRemaining, duration);
 
@@ -358,16 +368,16 @@
 
         // タイマー表示を更新
         function updateTimerDisplay(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            timerText.textContent = `${('0' + minutes).slice(-2)}:${('0' + secs).slice(-2)}`;
+            var minutes = Math.floor(seconds / 60);
+            var secs = seconds % 60;
+            timerText.textContent = ('0' + minutes).slice(-2) + ':' + ('0' + secs).slice(-2);
         }
 
         // プログレスバーを更新
         function updateProgressBar(timeRemaining, totalDuration) {
-            const progress = timeRemaining / totalDuration;
-            const circumference = 2 * Math.PI * 90; // 半径90の円の円周
-            const offset = circumference * (1 - progress);
+            var progress = timeRemaining / totalDuration;
+            var circumference = 2 * Math.PI * 90; // 半径90の円の円周
+            var offset = circumference * (1 - progress);
             progressBar.style.strokeDasharray = circumference;
             progressBar.style.strokeDashoffset = offset;
         }

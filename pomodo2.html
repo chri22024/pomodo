@@ -17,7 +17,7 @@
             height: 100%;
             overflow: hidden;
             text-align: center;
-            transfor: scale(0.8);
+            transform: scale(0.8);
         }
 
         #slideshow-image {
@@ -164,11 +164,9 @@
 
             function moveRight() {
                 position += 10; 
-                slideshowImage.style.transform = `translateX(${position}px) scale(0.8)`;
+                slideshowImage.style.transform = `translateX(${position}px) `;
                 if (position < window.innerWidth / 5) {
                     setTimeout(moveRight, 0);
-                }
-                else{
                 }
             }
             moveRight();
