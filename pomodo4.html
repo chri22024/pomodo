@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>POMODO</title>
+    <style>
+        /* CSSスタイル */
+        body {
+            margin: 0;
+            padding: 0;
+            /* font-family: Arial, sans-serif; */
+        }
+
+        #image-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        #slideshow-image {
+            max-width: 50%;
+            max-height: 100%;
+            transition: 0.6s ease;
+            transform: scale(0.8);
+        }
+
+        #content {
+            position: absolute;
+            top: 45%;
+            left: 20%;
+            /* 距離を調整 */
+            transform: translateY(-50%);
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 1s;
+        }
+
+        /* フェードイン時のスタイル */
+        #content.content-isActive {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #pomodo-title {
+            font-size: 100px;
+            margin-bottom: 20px;
+            font-family: Impact;
+        }
+
+        #form-container {
+            display: none;
+            margin: 100px auto;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        #start-work-button {
+            display: none;
+            margin: 30px auto 0 auto;
+            /* ボタンを中央に配置 */
+            display: block;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* タイマー画面のスタイル */
+        #timer-container {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            text-align: center;
+        }
+
+        #timer-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 円形プログレスバーのスタイル */
+        .progress-circle {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .progress-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-circle circle {
+            fill: none;
+            stroke-width: 15;
+        }
+
+        .progress-bg {
+            stroke: #e6e6e6;
+        }
+
+        .progress-bar {
+            stroke: #ff6347;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        /* タイマーのテキスト表示 */
+        #timer-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+        }
+
+        /* 設定ボタンのスタイル */
+        #settings-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+            display: none;
+        }
+
+        /* 設定モーダルのスタイル */
+        #settings-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border: 1px solid #ccc;
+            z-index: 1000;
+        }
+
+        #modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        input[type="number"] {
+            width: 50px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 画像スライドショーのコンテナ -->
+    <div id="image-container">
+        <img id="slideshow-image" src="" alt="スライドショー画像">
+    </div>
+
+    <!-- POMODOタイトルと「はじめる」ボタン -->
+    <div id="content">
+        <div id="pomodo-title">POMODO</div>
+        <button id="start-button">はじめる</button>
+    </div>
+
+    <!-- 質問フォームのコンテナ -->
+    <div id="form-container">
+        <!-- 質問1 -->
+        <div class="question">
+            <p>質問1: 睡眠時間は何時間ですか？</p>
+            <label><input type="radio" name="answer1" value="6時間以下">6時間以下</label><br>
+            <label><input type="radio" name="answer1" value="6〜7時間">6〜7時間</label><br>
+            <label><input type="radio" name="answer1" value="7〜8時間">7〜8時間</label><br>
+            <label><input type="radio" name="answer1" value="8時間以上">8時間以上</label>
+        </div>
+
+        <!-- 質問2 -->
+        <div class="question">
+            <p>質問2: あなたの運動頻度はどのくらいですか？</p>
+            <label><input type="radio" name="answer2" value="ほとんどしない">ほとんどしない</label><br>
+            <label><input type="radio" name="answer2" value="週1〜2回">週1〜2回</label><br>
+            <label><input type="radio" name="answer2" value="週3〜4回">週3〜4回</label><br>
+            <label><input type="radio" name="answer2" value="週5回以上">週5回以上</label>
+        </div>
+
+        <!-- 質問3 -->
+        <div class="question">
+            <p>質問3: あなたのストレスレベルはどの程度ですか？</p>
+            <label><input type="radio" name="answer3" value="低い">低い</label><br>
+            <label><input type="radio" name="answer3" value="やや低い">やや低い</label><br>
+            <label><input type="radio" name="answer3" value="やや高い">やや高い</label><br>
+            <label><input type="radio" name="answer3" value="高い">高い</label>
+        </div>
+
+        <!-- 質問4 -->
+        <div class="question">
+            <p>質問4: あなたの食生活のバランスはどうですか？</p>
+            <label><input type="radio" name="answer4" value="悪い">悪い</label><br>
+            <label><input type="radio" name="answer4" value="やや悪い">やや悪い</label><br>
+            <label><input type="radio" name="answer4" value="やや良い">やや良い</label><br>
+            <label><input type="radio" name="answer4" value="良い">良い</label>
+        </div>
+
+        <!-- 「作業を開始する」ボタン -->
+        <button id="start-work-button">作業を開始する</button>
+    </div>
+
+
+    <!-- タイマー画面のコンテナ -->
+    <div id="timer-container">
+        <button id="settings-button">設定</button>
+        <div id="timer-content">
+            <div class="progress-circle">
+                <svg width="200" height="200">
+                    <circle class="progress-bg" cx="100" cy="100" r="90"></circle>
+                    <circle class="progress-bar" cx="100" cy="100" r="90" stroke-dasharray="565.48"
+                        stroke-dashoffset="0"></circle>
+                </svg>
+                <div id="timer-text">10:00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 設定モーダル -->
+    <div id="modal-overlay"></div>
+    <div id="settings-modal">
+        <h2>タイマー設定</h2>
+        <label>
+            作業時間（分）:
+            <input type="number" id="work-duration" value="10">
+        </label>
+        <br><br>
+        <label>
+            休憩時間（分）:
+            <input type="number" id="break-duration" value="5">
+        </label>
+        <br><br>
+        <button id="save-settings-button">保存</button>
+    </div>
+
+    <script>
+        // JavaScriptコード
+
+        // 画像のパスを配列で定義（実際の画像パスに置き換えてください）
+        var images = [
+            'pictures/1.jpg',
+            'pictures/2.jpg',
+            'pictures/3.jpg',
+            'pictures/4.jpg',
+            'pictures/5.jpg',
+            'pictures/6.jpg',
+            'pictures/7.jpg',
+            'pictures/8.jpg'
+        ];
+
+        var currentImageIndex = 0;
+        var slideshowImage = document.getElementById('slideshow-image');
+        var content = document.getElementById('content');
+        var startButton = document.getElementById('start-button');
+        var formContainer = document.getElementById('form-container');
+        var startWorkButton = document.getElementById('start-work-button');
+        var timerContainer = document.getElementById('timer-container');
+        var timerText = document.getElementById('timer-text');
+        var progressBar = document.querySelector('.progress-bar');
+        var settingsButton = document.getElementById('settings-button');
+        var settingsModal = document.getElementById('settings-modal');
+        var modalOverlay = document.getElementById('modal-overlay');
+        var saveSettingsButton = document.getElementById('save-settings-button');
+        var workDurationInput = document.getElementById('work-duration');
+        var breakDurationInput = document.getElementById('break-duration');
+
+        // デフォルトのタイマー設定
+        var workDuration = 10; // 分
+        var breakDuration = 5; // 分
+
+        // スライドショーを開始する関数
+        function startSlideshow() {
+            slideshowImage.src = images[currentImageIndex];
+            var slideshowInterval = setInterval(function () {
+                currentImageIndex++;
+                if (currentImageIndex < images.length) {
+                    slideshowImage.src = images[currentImageIndex];
+                } else {
+                    clearInterval(slideshowInterval);
+                    shiftImageRight();
+                }
+            }, 450);
+        }
+
+        // 画像を右側に寄せてコンテンツを表示
+        function shiftImageRight() {
+            slideshowImage.style.transition = 'transform 1s ease';
+            slideshowImage.style.transform = 'translateX(28%) scale(0.8)'; // 移動量を調整
+
+            // 画像の移動が完了したらコンテンツをフェードイン
+            setTimeout(function () {
+                content.classList.add('content-isActive');
+            }, 1000);
+        }
+
+        // 「はじめる」ボタンのクリックイベント
+        startButton.addEventListener('click', function () {
+            formContainer.style.display = 'block';
+            formContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // フォームの入力チェック
+        var inputs = formContainer.getElementsByTagName('input');
+        for (var i = 0; i < inputs.length; i++) {
+            inputs[i].addEventListener('input', checkFormCompletion);
+        }
+
+        function checkFormCompletion() {
+            var allFilled = true;
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].value === '') {
+                    allFilled = false;
+                    break;
+                }
+            }
+            if (allFilled) {
+                startWorkButton.style.display = 'block';
+            } else {
+                startWorkButton.style.display = 'none';
+            }
+        }
+
+        // 「作業を開始する」ボタンのクリックイベント
+        startWorkButton.addEventListener('click', function () {
+            // タイマー設定（回答結果に基づくロジックをここに追加可能）
+            workDuration = parseInt(workDurationInput.value) || 10;
+            breakDuration = parseInt(breakDurationInput.value) || 5;
+
+            // フォームを隠す
+            formContainer.style.display = 'none';
+
+            // タイマー画面を表示
+            timerContainer.style.display = 'block';
+            settingsButton.style.display = 'block';
+
+            // タイマー画面にスクロール
+            timerContainer.scrollIntoView({ behavior: 'smooth' });
+
+            // 作業タイマーを開始
+            startTimer(workDuration * 60, 'work');
+        });
+
+        // タイマー機能
+        var timerInterval;
+
+        function startTimer(duration, mode) {
+            var timeRemaining = duration;
+            updateTimerDisplay(timeRemaining);
+            updateProgressBar(timeRemaining, duration);
+
+            timerInterval = setInterval(function () {
+                timeRemaining--;
+                updateTimerDisplay(timeRemaining);
+                updateProgressBar(timeRemaining, duration);
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    if (mode === 'work') {
+                        // 休憩タイマーを開始
+                        startTimer(breakDuration * 60, 'break');
+                    } else {
+                        // 終了または再度作業タイマーを開始
+                        alert('タイマーが終了しました。');
+                    }
+                }
+            }, 1000);
+        }
+
+        // タイマー表示を更新
+        function updateTimerDisplay(seconds) {
+            var minutes = Math.floor(seconds / 60);
+            var secs = seconds % 60;
+            timerText.textContent = ('0' + minutes).slice(-2) + ':' + ('0' + secs).slice(-2);
+        }
+
+        // プログレスバーを更新
+        function updateProgressBar(timeRemaining, totalDuration) {
+            var progress = timeRemaining / totalDuration;
+            var circumference = 2 * Math.PI * 90; // 半径90の円の円周
+            var offset = circumference * (1 - progress);
+            progressBar.style.strokeDasharray = circumference;
+            progressBar.style.strokeDashoffset = offset;
+        }
+
+        // 設定ボタンのクリックイベント
+        settingsButton.addEventListener('click', function () {
+            settingsModal.style.display = 'block';
+            modalOverlay.style.display = 'block';
+        });
+
+        // 設定保存ボタンのクリックイベント
+        saveSettingsButton.addEventListener('click', function () {
+            workDuration = parseInt(workDurationInput.value) || 10;
+            breakDuration = parseInt(breakDurationInput.value) || 5;
+            settingsModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+
+        // モーダル外クリックで閉じる
+        modalOverlay.addEventListener('click', function () {
+            settingsModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+
+        // ページ読み込み時にスライドショーを開始
+        window.onload = function () {
+            startSlideshow();
+        };
+    </script>
+
+</body>
+
+</html>
