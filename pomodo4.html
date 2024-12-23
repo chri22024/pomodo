@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 
 <head>
@@ -191,6 +191,12 @@
             <label><input type="radio" name="answer1" value="2">31分以上61分未満</label><br>
             <label><input type="radio" name="answer1" value="3"> 61分を超える</label>
         </div>
+        <div class="question">
+            <p>sleep time</p>
+            <input type="number" id="sleep_hours" min="3" max="10" ><br>
+        
+        </div>
+
 
         <!-- 質問2 -->
         <div class="question">
@@ -274,9 +280,9 @@
         </div>
         <p>質問4j:上記以外の理由があれば次の空欄に記載してください </p>
         <input type="text" id="answer13">
-   　　　 </div>
-    　　　　<div class="question">
-   　　　　　　 </div>
+   </div>
+    <div class="question">
+    </div>
    <p>質問5:過去1ヶ月間において、ご自分の睡眠の質を全体として、どのように評価しますか？ </p>
    <label><input type="radio" name="answer13" value="0">非常に良い</label><br>
    <label><input type="radio" name="answer13" value="1">かなり良い</label><br>
@@ -371,10 +377,16 @@
         var saveSettingsButton = document.getElementById('save-settings-button');
         var workDurationInput = document.getElementById('work-duration');
         var breakDurationInput = document.getElementById('break-duration');
+        
+        var sleepHours = document.getElementById('sleep_hours');
+        // var metalState = document.getElementById('');
+        // var workTime = document.getElementById('');
 
         // デフォルトのタイマー設定
-        var workDuration = 10; // 分
-        var breakDuration = 5; // 分
+        var workDuration = sleepHours; // 分
+        var breakDuration = 0; // 分
+
+        const totalTime = 30; //分
 
         // スライドショーを開始する関数
         function startSlideshow() {
@@ -424,15 +436,21 @@
             if (allFilled) {
                 startWorkButton.style.display = 'block';
             } else {
-                startWorkButton.style.display = 'none';
+                // startWorkButton.style.display = 'none';
+                startWorkButton.style.display = 'block';
             }
         }
 
         // 「作業を開始する」ボタンのクリックイベント
         startWorkButton.addEventListener('click', function () {
+
+            var mentalState = 1;
+            var workTime = "moring";
+            
+            workDuration = calculateTime(sleepHours.value, mentalState, workTime);
             // タイマー設定（回答結果に基づくロジックをここに追加可能）
-            workDuration = parseInt(workDurationInput.value) || 10;
-            breakDuration = parseInt(breakDurationInput.value) || 5;
+            breakDuration = totalTime - workDuration;
+
 
             // フォームを隠す
             formContainer.style.display = 'none';
@@ -444,9 +462,16 @@
             // タイマー画面にスクロール
             timerContainer.scrollIntoView({ behavior: 'smooth' });
 
+
+
             // 作業タイマーを開始
+            console.log(workDuration * 60);
+            console.log(breakDuration * 60);
             startTimer(workDuration * 60, 'work');
+
+            
         });
+
 
         // タイマー機能
         var timerInterval;
@@ -514,6 +539,88 @@
         window.onload = function () {
             startSlideshow();
         };
+
+
+        // 時間設定をする関数
+        function calculateTime(sleepTime, mental, time) {
+            const sleepHours = sleepTime;
+            const mentalState = mental;
+            const workTime = time;
+            const concentrationBaseTime = 25;
+            const breakBaseTime = 5;
+
+            let concentrationTime = concentrationBaseTime;
+            let concentrationRate = 0.0;
+            let mentalStateRate = 0.0;           
+            let workRate = 0.0;           
+            let totalRate = 0.0;
+
+
+            // 3つの項目から作業時間を計算
+
+            console.log(sleepTime);
+            console.log(mentalState);
+            console.log(workTime);
+
+            if(sleepHours > concentrationBaseTime){
+                concentrationRate = -0.1;
+            }else if(sleepHours > 5){
+                concentrationRate = 0
+            }else if(sleepHours > 3){
+                concentrationRate = 0.03;
+            }else if(sleepHours >= 3){
+                concentrationRate = 0.1;
+            }
+           
+
+            concentrationTime -= concentrationBaseTime * concentrationRate;
+
+            // mentalState
+            switch (mentalState) {
+                case 5:
+                    mentalStateRate = 0.2;
+                    break;
+                case 4:
+                    mentalStateRate = 0.1;
+                    break;
+                case 3:
+                    mentalStateRate = 0;
+                    break;
+                case 2:
+                    mentalStateRate = -0.1;
+                    break;
+                case 1:
+                    mentalStateRate = -0.2;
+                    break;
+            }
+            concentrationTime -= -concentrationBaseTime * mentalStateRate;
+
+            // workTime
+            switch(workTime) {
+                case 'morning':
+                    workRate =  0.15;
+                    break;
+                case 'afternoon':
+                    workRate = 0.05;
+                    break;
+                case 'night':
+                    workRate = 0;
+                    break;
+            }
+            concentrationTime -= concentrationBaseTime * workRate;
+
+            breakTime =  5 + concentrationBaseTime - concentrationTime 
+            if(breakTime < 5){
+                breakTime = 5;
+            }
+
+            return concentrationTime;
+
+            // const resultElement = document.getElementById('result');
+            // resultElement.textContent = `推奨作業時間: ${ (concentrationTime).toFixed(0)} 分、推奨休憩時間: ${breakTime.toFixed(0)} 分`;
+        }
+
+
     </script>
 
 </body>
