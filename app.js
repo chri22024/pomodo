@@ -29,13 +29,15 @@ var breakDurationInput = document.getElementById('break-duration');
 var sleepHours = document.getElementById('sleep_hours');
 var mentalState = document.getElementById('mental_state');
 var workTime = document.getElementById('work_time');
-
+var pauseButton = document.getElementById('pause-button');
+var resumeButton = document.getElementById('resume-button');
 // デフォルトのタイマー設定
 var workDuration = sleepHours; // 分
 var breakDuration = 0; // 分
 
 const totalTime = 30; //分
 
+var isStop = 0;
 // スライドショーを開始する関数
 function startSlideshow() {
     slideshowImage.src = images[currentImageIndex];
@@ -133,10 +135,13 @@ function startTimer(duration, mode) {
     updateProgressBar(timeRemaining, duration);
 
     timerInterval = setInterval(function () {
-        timeRemaining--;
-        updateTimerDisplay(timeRemaining);
-        updateProgressBar(timeRemaining, duration);
 
+        console.log(isStop, 'isStop');
+        if(!isStop){
+            timeRemaining--;
+            updateTimerDisplay(timeRemaining);
+            updateProgressBar(timeRemaining, duration);
+        }
         if (timeRemaining <= 0) {
             clearInterval(timerInterval);
             if (mode === 'work') {
@@ -190,6 +195,21 @@ modalOverlay.addEventListener('click', function () {
 window.onload = function () {
     startSlideshow();
 };
+
+
+// 一時停止ボタンのクリックイベント
+pauseButton.addEventListener('click', function () {
+    isStop = 1;
+    pauseButton.style.display = 'none';
+    resumeButton.style.display = 'block';
+});
+
+// 再開ボタンのクリックイベント
+resumeButton.addEventListener('click', function () {
+    isStop = 0;
+    resumeButton.style.display = 'none';
+    pauseButton.style.display = 'block';
+});
 
 // 時間設定をする関数
 function calculateTime(sleepTime, mental, time) {
