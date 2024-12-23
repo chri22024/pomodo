@@ -10,6 +10,7 @@ var images = [
     'pictures/8.jpg'
 ];
 
+// 要素の取得
 var currentImageIndex = 0;
 var slideshowImage = document.getElementById('slideshow-image');
 var content = document.getElementById('content');
@@ -26,18 +27,38 @@ var saveSettingsButton = document.getElementById('save-settings-button');
 var workDurationInput = document.getElementById('work-duration');
 var breakDurationInput = document.getElementById('break-duration');
 
+// 質問フォーム入力
 var sleepHours = document.getElementById('sleep_hours');
-var mentalState = document.getElementById('mental_state');
-var workTime = document.getElementById('work_time');
+
+// 一時停止／再開ボタン
 var pauseButton = document.getElementById('pause-button');
 var resumeButton = document.getElementById('resume-button');
-// デフォルトのタイマー設定
-var workDuration = sleepHours; // 分
-var breakDuration = 0; // 分
 
-const totalTime = 30; //分
+// 作業中か休憩中かを表示
+var timerModeElement = document.getElementById('timer-mode');
 
+// 現在何セット目か
+var currentSetElement = document.getElementById('current-set');
+
+// タイマー設定
+var totalTime = 30; // (作業+休憩)の合計を30分と仮定
+var workDuration = 0;  // 実際にはユーザ入力で計算
+var breakDuration = 0;
+
+// 一時停止フラグ
 var isStop = 0;
+
+// 何セット完了したか
+var setCount = 0;
+
+// タイマー用
+var timerInterval;
+
+// ページ読み込み時にスライドショーを開始
+window.onload = function () {
+    startSlideshow();
+};
+
 // スライドショーを開始する関数
 function startSlideshow() {
     slideshowImage.src = images[currentImageIndex];
@@ -55,54 +76,78 @@ function startSlideshow() {
 // 画像を右側に寄せてコンテンツを表示
 function shiftImageRight() {
     slideshowImage.style.transition = 'transform 1s ease';
-    slideshowImage.style.transform = 'translateX(28%) scale(0.8)'; // 移動量を調整
+    slideshowImage.style.transform = 'translateX(28%) scale(0.8)';
 
-    // 画像の移動が完了したらコンテンツをフェードイン
+    // 移動が完了したらコンテンツをフェードイン
     setTimeout(function () {
         content.classList.add('content-isActive');
     }, 1000);
 }
 
-// 「はじめる」ボタンのクリックイベント
+// 「はじめる」ボタンを押したら質問フォームを表示
 startButton.addEventListener('click', function () {
     formContainer.style.display = 'block';
     formContainer.scrollIntoView({ behavior: 'smooth' });
 });
 
-// フォームの入力チェック
-var inputs = formContainer.getElementsByTagName('input');
-for (var i = 0; i < inputs.length; i++) {
-    inputs[i].addEventListener('input', checkFormCompletion);
-}
+// ==================== 入力チェック ====================
+// ラジオボタンや number 入力を総合的にチェックする
+// 全てのラジオグループ名 (name属性) をまとめる
+var radioGroups = [
+  'answer1', 'answer2', 'answer3', 'answer4' // など必要な分
+];
+var allRadios = document.querySelectorAll('#form-container input[type="radio"]');
+var allNumberOrText = document.querySelectorAll('#form-container input[type="number"], #form-container input[type="text"]');
 
+// ラジオボタンには change イベント、テキスト/数値には input イベントを登録
+allRadios.forEach(function(r) {
+    r.addEventListener('change', checkFormCompletion);
+});
+allNumberOrText.forEach(function(nt) {
+    nt.addEventListener('input', checkFormCompletion);
+});
+
+// フォームがすべて埋まっているかをチェックする関数
 function checkFormCompletion() {
     var allFilled = true;
-    for (var i = 0; i < inputs.length; i++) {
-        if (inputs[i].value === '') {
+
+    // 1) ラジオグループごとに "どれか一つが選択されている" か確認
+    for (var i = 0; i < radioGroups.length; i++) {
+        var groupName = radioGroups[i];
+        var radios = document.getElementsByName(groupName);
+        var groupChecked = false;
+        for (var j = 0; j < radios.length; j++) {
+            if (radios[j].checked) {
+                groupChecked = true;
+                break;
+            }
+        }
+        if (!groupChecked) {
             allFilled = false;
             break;
         }
     }
+
+    // 2) number, text の入力チェック
+    allNumberOrText.forEach(function(el) {
+        if (!el.value) {
+            allFilled = false;
+        }
+    });
+
+    // 条件を満たせば「作業を開始する」ボタンを表示
     if (allFilled) {
         startWorkButton.style.display = 'block';
     } else {
-        // startWorkButton.style.display = 'none';
-        startWorkButton.style.display = 'block';
+        startWorkButton.style.display = 'none';
     }
 }
 
 // 「作業を開始する」ボタンのクリックイベント
 startWorkButton.addEventListener('click', function () {
-
-
-    console.log(sleepHours.value, mentalState.value, workTime.value);
-    workDuration = calculateTime(sleepHours.value, mentalState.value, workTime.value);
-    // workDuration = calculateTime(3, 1, "morning");
-    console.log(workDuration);
-    // タイマー設定（回答結果に基づくロジックをここに追加可能）
+    // sleepHours.valueなどをもとに動的に作業時間を計算
+    workDuration = calculateTime(sleepHours.value);
     breakDuration = totalTime - workDuration;
-
-    // testCalculateTime();
 
     // フォームを隠す
     formContainer.style.display = 'none';
@@ -114,48 +159,58 @@ startWorkButton.addEventListener('click', function () {
     // タイマー画面にスクロール
     timerContainer.scrollIntoView({ behavior: 'smooth' });
 
+    // セット数初期化
+    setCount = 0;
+    currentSetElement.textContent = `現在 ${setCount} セット目`;
 
-
-    // 作業タイマーを開始
-    console.log(workDuration * 60);
-    console.log(breakDuration * 60);
+    // 作業タイマー開始
     startTimer(workDuration * 60, 'work');
-
-
 });
 
-
-
-// タイマー機能
-var timerInterval;
-
+// タイマー開始
 function startTimer(duration, mode) {
     var timeRemaining = duration;
+    var totalDuration = duration; // プログレスバーの計算用に保持
+
+    // モード表示を更新
+    if (mode === 'work') {
+        timerModeElement.textContent = '作業中';
+        timerModeElement.classList.remove('mode-break');
+        timerModeElement.classList.add('mode-work');
+    } else {
+        timerModeElement.textContent = '休憩中';
+        timerModeElement.classList.remove('mode-work');
+        timerModeElement.classList.add('mode-break');
+    }
+
     updateTimerDisplay(timeRemaining);
-    updateProgressBar(timeRemaining, duration);
+    updateProgressBar(timeRemaining, totalDuration);
 
     timerInterval = setInterval(function () {
-
-        console.log(isStop, 'isStop');
-        if(!isStop){
+        if (!isStop) {
             timeRemaining--;
             updateTimerDisplay(timeRemaining);
-            updateProgressBar(timeRemaining, duration);
+            updateProgressBar(timeRemaining, totalDuration);
         }
+
         if (timeRemaining <= 0) {
             clearInterval(timerInterval);
             if (mode === 'work') {
-                // 休憩タイマーを開始
+                // 作業終了 → 休憩タイマー開始
                 startTimer(breakDuration * 60, 'break');
             } else {
-                // 終了または再度作業タイマーを開始
-                alert('タイマーが終了しました。');
+                // 休憩終了 → 1セット完了
+                setCount++;
+                currentSetElement.textContent = `現在 ${setCount} セット目`;
+
+                // 必要に応じて再度作業タイマーを呼ぶ or 終了する
+                alert('1セット終了しました。');
             }
         }
     }, 1000);
 }
 
-// タイマー表示を更新
+// タイマーの表示を更新
 function updateTimerDisplay(seconds) {
     var minutes = Math.floor(seconds / 60);
     var secs = seconds % 60;
@@ -165,19 +220,33 @@ function updateTimerDisplay(seconds) {
 // プログレスバーを更新
 function updateProgressBar(timeRemaining, totalDuration) {
     var progress = timeRemaining / totalDuration;
-    var circumference = 2 * Math.PI * 90; // 半径90の円の円周
+    var circumference = 2 * Math.PI * 90; // 半径90の円の周
     var offset = circumference * (1 - progress);
     progressBar.style.strokeDasharray = circumference;
     progressBar.style.strokeDashoffset = offset;
 }
 
-// 設定ボタンのクリックイベント
+// 一時停止ボタン
+pauseButton.addEventListener('click', function () {
+    isStop = 1;
+    pauseButton.style.display = 'none';
+    resumeButton.style.display = 'block';
+});
+
+// 再開ボタン
+resumeButton.addEventListener('click', function () {
+    isStop = 0;
+    resumeButton.style.display = 'none';
+    pauseButton.style.display = 'block';
+});
+
+// 設定ボタン
 settingsButton.addEventListener('click', function () {
     settingsModal.style.display = 'block';
     modalOverlay.style.display = 'block';
 });
 
-// 設定保存ボタンのクリックイベント
+// 設定モーダル保存ボタン
 saveSettingsButton.addEventListener('click', function () {
     workDuration = parseInt(workDurationInput.value) || 10;
     breakDuration = parseInt(breakDurationInput.value) || 5;
@@ -191,123 +260,18 @@ modalOverlay.addEventListener('click', function () {
     modalOverlay.style.display = 'none';
 });
 
-// ページ読み込み時にスライドショーを開始
-window.onload = function () {
-    startSlideshow();
-};
-
-
-// 一時停止ボタンのクリックイベント
-pauseButton.addEventListener('click', function () {
-    isStop = 1;
-    pauseButton.style.display = 'none';
-    resumeButton.style.display = 'block';
-});
-
-// 再開ボタンのクリックイベント
-resumeButton.addEventListener('click', function () {
-    isStop = 0;
-    resumeButton.style.display = 'none';
-    pauseButton.style.display = 'block';
-});
-
-// 時間設定をする関数
-function calculateTime(sleepTime, mental, time) {
-    const sleepHours = sleepTime;
-    const mentalState = mental;
-    const workTime = time;
-    const concentrationBaseTime = 25;
-
-    let concentrationTime = concentrationBaseTime;
-    let concentrationRate = 0;
-    var mentalStateRate = 0;
-    let workRate = 0.0;
-    let totalRate = 0.0;
-
-
-    // 3つの項目から作業時間を計算
-
-    // console.log(sleepTime);
-    // console.log(mentalState);
-    // console.log(workTime);
-
-    if(sleepHours > concentrationBaseTime){
-        concentrationRate = -0.1;
-    }else if(sleepHours > 5){
-        concentrationRate = 0
-    }else if(sleepHours > 3){
-        concentrationRate = 0.03;
-    }else{
-        concentrationRate = 0.1;
+// ===== 作業時間を計算するサンプル関数 =====
+// 実際には sleepHours.value, mentalState.value, workTime.value などを
+// 使って、より複雑に演算してください
+function calculateTime(sleepTime) {
+    var baseWorkTime = 25; // 作業時間(分)
+    var sVal = parseFloat(sleepTime) || 5;
+    // 例: 睡眠時間が短いほど作業時間を短くする → 単純な例
+    if (sVal < 5) {
+        baseWorkTime -= 5;
     }
-    console.log(concentrationRate);
-
-
-    concentrationTime -= concentrationBaseTime * concentrationRate;
-
-    // mentalState
-    if (mentalState == 5) {
-        mentalStateRate = 0.2;
-    } else if (mentalState == 4) {
-        mentalStateRate = 0.1;
-    } else if (mentalState == 3) {
-        mentalStateRate = 0;
-    } else if (mentalState == 2) {
-        mentalStateRate = -0.1;
-    } else if (mentalState == 1) {
-        mentalStateRate = -0.2;
+    if (baseWorkTime < 10) {
+        baseWorkTime = 10; // 最小10分
     }
-    
-    
-    
-    console.log('mentalState', mentalState);
-    console.log('mentalStateRate', mentalStateRate);
-    concentrationTime -= -concentrationBaseTime * mentalStateRate;
-
-    // workTime
-    switch(workTime) {
-        case 'morning':
-            workRate =  0.15;
-            break;
-        case 'afternoon':
-            workRate = 0.05;
-            break;
-        case 'night':
-            workRate = 0;
-            break;
-    }
-    console.log('workRate',workRate);
-    concentrationTime -= concentrationBaseTime * workRate;
-
-
-    return concentrationTime;
-
-    // const resultElement = document.getElementById('result');
-    // resultElement.textContent = `推奨作業時間: ${ (concentrationTime).toFixed(0)} 分、推奨休憩時間: ${breakTime.toFixed(0)} 分`;
+    return baseWorkTime;
 }
-
-
-function testCalculateTime() {
-    const sleepTimeValues = [0, 3, 4, 6, 8, 10];
-    const mentalStateValues = [1, 2, 3, 4, 5];
-    const workTimeValues = ['morning', 'afternoon', 'night'];
-
-    const results = [];
-
-    for (const sleepTime of sleepTimeValues) {
-        for (const mental of mentalStateValues) {
-            for (const time of workTimeValues) {
-                const concentrationTime = calculateTime(sleepTime, mental, time);
-                results.push({
-                    sleepTime,
-                    mental,
-                    time,
-                    concentrationTime: concentrationTime.toFixed(2),
-                });
-            }
-        }
-    }
-
-    console.table(results);
-}
-
