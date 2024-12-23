@@ -158,4 +158,11 @@
             width: 50px;
             margin-left: 10px;
         }
-    </style>
+        #pause-button, #resume-button {
+            top: 700px;
+            width: 10%;
+            height: 10%;
+            position: relative;
+            text-align: center;
+        }
+</style>
