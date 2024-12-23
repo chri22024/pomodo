@@ -1,0 +1,161 @@
+ <style> /* CSS スタイル */
+        body {
+            margin: 0;
+            padding: 0;
+            /* font-family: Arial, sans-serif; */
+        }
+
+        #image-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        #slideshow-image {
+            max-width: 50%;
+            max-height: 100%;
+            transition: 0.6s ease;
+            transform: scale(0.8);
+        }
+
+        #content {
+            position: absolute;
+            top: 45%;
+            left: 20%;
+            /* 距離を調整 */
+            transform: translateY(-50%);
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 1s;
+        }
+
+        /* フェードイン時のスタイル */
+        #content.content-isActive {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #pomodo-title {
+            font-size: 100px;
+            margin-bottom: 20px;
+            font-family: Impact;
+        }
+
+        #form-container {
+            display: none;
+            margin: 100px auto;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        #start-work-button {
+            display: none;
+            margin: 30px auto 0 auto;
+            /* ボタンを中央に配置 */
+            display: block;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* タイマー画面のスタイル */
+        #timer-container {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            text-align: center;
+        }
+
+        #timer-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 円形プログレスバーのスタイル */
+        .progress-circle {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .progress-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-circle circle {
+            fill: none;
+            stroke-width: 15;
+        }
+
+        .progress-bg {
+            stroke: #e6e6e6;
+        }
+
+        .progress-bar {
+            stroke: #ff6347;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        /* タイマーのテキスト表示 */
+        #timer-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+        }
+
+        /* 設定ボタンのスタイル */
+        #settings-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+            display: none;
+        }
+
+        /* 設定モーダルのスタイル */
+        #settings-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border: 1px solid #ccc;
+            z-index: 1000;
+        }
+
+        #modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        input[type="number"] {
+            width: 50px;
+            margin-left: 10px;
+        }
+    </style>

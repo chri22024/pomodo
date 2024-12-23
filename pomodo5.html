@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>POMODO</title>
+
+    <link rel = "stylesheet" href = "style.css">
+   </head>
+
+<body>
+
+    <!-- 画像スライドショーのコンテナ -->
+    <div id="image-container">
+        <img id="slideshow-image" src="" alt="スライドショー画像">
+    </div>
+
+    <!-- POMODO タイトルと「はじめる」ボタン -->
+    <div id="content">
+        <div id="pomodo-title">POMODO</div>
+        <button id="start-button">はじめる</button>
+    </div>
+
+    <!-- 質問フォームのコンテナ -->
+    <div id="form-container">
+        <!-- 質問 1 -->
+        <div class="question">
+            <p>質問 1: 過去一ヶ月間において、寝床についてから眠るまでどのくらい時間を要しましたか
+                ？</p>
+            <label><input type="radio" name="answer1" value="0">16 分以上 31 分未満</label><br>
+            <label><input type="radio" name="answer1" value="1">16 分未満 31 分以上</label><br>
+            <label><input type="radio" name="answer1" value="2">31 分以上 61 分未満</label><br>
+            <label><input type="radio" name="answer1" value="3"> 61 分を超える</label>
+        </div>
+        <div class="question">
+            <p>sleep time</p>
+            <input type="number" id="sleep_hours" min="3" max="10" ><br>
+        
+        </div>
+        <label for="mental_state">メンタル状況:</label>
+        <select id="mental_state">
+            <option value="5">非常に良い</option>
+            <option value="4">良い</option>
+            <option value="3" selected>普通</option>
+            <option value="2">悪い</option>
+            <option value="1">非常に悪い</option>
+        </select><br>
+
+        <label for="work_time">作業時間帯:</label>
+        <select id="work_time">
+            <option value="morning" selected>午前 (9 時〜12 時)</option>
+            <option value="afternoon">午後 (13 時〜17 時)</option>
+            <option value="night">夜間 (18 時〜22 時)</option>
+        </select><br>
+
+
+
+
+
+        <!-- 質問 2 -->
+        <div class="question">
+            <p>質問 2: 過去一ヶ月間において、通常何時頃起床しましたか？
+        
+            <input type="text" id="answer2">
+        </div>
+        <div class="question">
+        </div>
+
+        <!-- 質問 3 -->
+        <div class="question">
+            <p>質問 3: 過去一ヶ月間において実際の睡眠時間は何時間くらいでしたか？これはあなたが寝床の中にいた時間とはことなう可能性があります。
+
+            </p>
+            <label><input type="radio" name="answer3" value="0">７時間を超える</label><br>
+            <label><input type="radio" name="answer3" value="1">６時間を超え７時間以下</label><br>
+            <label><input type="radio" name="answer3" value="2">５時間以上６時間以下</label><br>
+            <label><input type="radio" name="answer3" value="3">５時間未満</label>
+        
+        </div>
+
+        <!-- 質問 4a-->
+        <div class="question">
+            <p>質問 4a: 過去一ヶ月において、どのくらいの頻度で以下の理由のために睡眠が困難でしたか？最も当てはまるもの一つを選んでください。
+            </p>
+
+            <label><input type="radio" name="answer4" value="0">なし</label><br>
+            <label><input type="radio" name="answer4" value="1">1 週間に 1 回未満</label><br>
+            <label><input type="radio" name="answer4" value="2">1 週間に 1-2 回</label><br>
+            <label><input type="radio" name="answer4" value="3">1 週間に 3 回以上</label>
+        </div>  
+         
+            <p>質問 4b: 夜中または早朝に目が覚めたから</p>
+            <label><input type="radio" name="answer5" value="0">なし</label><br>
+            <label><input type="radio" name="answer5" value="1">1 週間に 1 回未満</label><br>
+            <label><input type="radio" name="answer5" value="2">1 週間に 1-2 回</label><br>
+            <label><input type="radio" name="answer5" value="3">1 週間に 3 回以上</label>
+        </div>
+            <p>質問 4c: トイレに起きたから</p>
+            <label><input type="radio" name="answer6" value="0">なし</label><br>
+            <label><input type="radio" name="answer6" value="1">1 週間に 1 回未満</label><br>
+            <label><input type="radio" name="answer6" value="2">1 週間に 1-2 回</label><br>
+            <label><input type="radio" name="answer6" value="3">1 週間に 3 回以上</label>
+        </div>
+            <p>質問 4d:息苦しかったから </p>
+            <label><input type="radio" name="answer7" value="0">なし</label><br>
+            <label><input type="radio" name="answer7" value="1">1 週間に 1 回未満</label><br>
+            <label><input type="radio" name="answer7" value="2">1 週間に 1-2 回</label><br>
+            <label><input type="radio" name="answer7" value="3">1 週間に 3 回以上</label>
+        </div>
+            <p>質問 4e:咳が出たり、大きないびきをかいたから </p>
+            <label><input type="radio" name="answer8" value="0">なし</label><br>
+            <label><input type="radio" name="answer8" value="1">1 週間に 1 回未満</label><br>
+            <label><input type="radio" name="answer8" value="2">1 週間に 1-2 回</label><br>
+            <label><input type="radio" name="answer8" value="3">1 週間に 3 回以上</label>
+        </div>
+            <p>質問 4f:ひどく寒く感じたから </p>
+            <label><input type="radio" name="answer9" value="0">なし</label><br>
+            <label><input type="radio" name="answer9" value="1">1 週間に 1 回未満</label><br>
+            <label><input type="radio" name="answer9" value="2">1 週間に 1-2 回</label><br>
+            <label><input type="radio" name="answer9" value="3">1 週間に 3 回以上</label>
+        </div>
+        <p>質問 4g:ひどく暑く感じたから </p>
+        <label><input type="radio" name="answer10" value="0">なし</label><br>
+        <label><input type="radio" name="answer10" value="1">1 週間に 1 回未満</label><br>
+        <label><input type="radio" name="answer10" value="2">1 週間に 1-2 回</label><br>
+        <label><input type="radio" name="answer10" value="3">1 週間に 3 回以上</label>
+       </div>
+       <p>質問 4h:悪い夢を見たから </p>
+            <label><input type="radio" name="answer11" value="0">なし</label><br>
+            <label><input type="radio" name="answer11" value="1">1 週間に 1 回未満</label><br>
+            <label><input type="radio" name="answer11" value="2">1 週間に 1-2 回</label><br>
+            <label><input type="radio" name="answer11" value="3">1 週間に 3 回以上</label>
+        </div>
+        <p>質問 4i:痛みがあったから </p>
+            <label><input type="radio" name="answer12" value="0">なし</label><br>
+            <label><input type="radio" name="answer12" value="1">1 週間に 1 回未満</label><br>
+            <label><input type="radio" name="answer12" value="2">1 週間に 1-2 回</label><br>
+            <label><input type="radio" name="answer12" value="3">1 週間に 3 回以上</label>
+        </div>
+        <p>質問 4j:上記以外の理由があれば次の空欄に記載してください </p>
+        <input type="text" id="answer13">
+   </div>
+    <div class="question">
+    </div>
+   <p>質問 5:過去 1 ヶ月間において、ご自分の睡眠の質を全体として、どのように評価しますか？ </p>
+   <label><input type="radio" name="answer13" value="0">非常に良い</label><br>
+   <label><input type="radio" name="answer13" value="1">かなり良い</label><br>
+   <label><input type="radio" name="answer13" value="2">かなり悪い</label><br>
+   <label><input type="radio" name="answer13" value="3">非常に悪い</label>
+</div>
+<p>質問 6:過去 1 か月間においてどのくらいの頻度で眠るための薬を服用しましたか(医師から処方された薬あるいは薬局で買った薬
+    ) </p>
+         <label><input type="radio" name="answer14" value="0">なし</label><br>
+        <label><input type="radio" name="answer14" value="1">1 週間に 1 回未満</label><br>
+         <label><input type="radio" name="answer14" value="2">1 週間に 1-2 回</label><br>
+         <label><input type="radio" name="answer14" value="3">1 週間に 3 回以上</label>
+        </div>
+    <p>質問 7:過去 1 ヶ月において、どれくらいの頻度で、車の運転中や食事中や社会活動中などに眠ってはいけない時に、起きていられなくなり困ったことがありましたか？ </p>
+         <label><input type="radio" name="answer15" value="0">なし</label><br>
+         <label><input type="radio" name="answer15" value="1">1 週間に 1 回未満</label><br>
+        <label><input type="radio" name="answer15" value="2">1 週間に 1-2 回</label><br>
+        <label><input type="radio" name="answer15" value="3">1 週間に 3 回以上</label>
+        </div>
+
+        <p>質問 8:過去 1 ヶ月において、物事をやり遂げるのに必要な意欲を持続する上でどのくらい問題がありましたか？ </p>
+        <label><input type="radio" name="answer16" value="0">全く問題なし</label><br>
+        <label><input type="radio" name="answer16" value="1">ほんのわずかだけ問題があった</label><br>
+       <label><input type="radio" name="answer16" value="2">いくらか問題があった</label><br>
+       <label><input type="radio" name="answer16" value="3">非常に大きな問題があった</label>
+       </div>
+
+        <!-- 「作業を開始する」ボタン -->
+        <button id="start-work-button">作業を開始する</button>
+    </div>
+
+
+    <!-- タイマー画面のコンテナ -->
+    <div id="timer-container">
+        <button id="settings-button">設定</button>
+        <div id="timer-content">
+            <div class="progress-circle">
+                <svg width="200" height="200">
+                    <circle class="progress-bg" cx="100" cy="100" r="90"></circle>
+                    <circle class="progress-bar" cx="100" cy="100" r="90" stroke-dasharray="565.48"
+                        stroke-dashoffset="0"></circle>
+                </svg>
+                <div id="timer-text">10:00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 設定モーダル -->
+    <div id="modal-overlay"></div>
+    <div id="settings-modal">
+        <h2>タイマー設定</h2>
+        <label>
+            作業時間（分）:
+            <input type="number" id="work-duration" value="10">
+        </label>
+        <br><br>
+        <label>
+            休憩時間（分）:
+            <input type="number" id="break-duration" value="5">
+        </label>
+        <br><br>
+        <button id="save-settings-button">保存</button>
+    </div>
+
+
+    <script src = "app.js"></script>
+
+</body>
+
+</html>
