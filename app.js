@@ -1,4 +1,3 @@
-
 // 画像のパスを配列で定義（実際の画像パスに置き換えてください）
 var images = [
     'pictures/1.jpg',
@@ -227,15 +226,15 @@ function calculateTime(sleepTime, mental, time) {
     concentrationTime -= concentrationBaseTime * concentrationRate;
 
     // mentalState
-    if (mentalState === 5) {
+    if (mentalState == 5) {
         mentalStateRate = 0.2;
-    } else if (mentalState === 4) {
+    } else if (mentalState == 4) {
         mentalStateRate = 0.1;
-    } else if (mentalState === 3) {
+    } else if (mentalState == 3) {
         mentalStateRate = 0;
-    } else if (mentalState === 2) {
+    } else if (mentalState == 2) {
         mentalStateRate = -0.1;
-    } else if (mentalState === 1) {
+    } else if (mentalState == 1) {
         mentalStateRate = -0.2;
     }
     
