@@ -551,3 +551,23 @@ function calculateScoreExample() {
 
     return score;
 }
+
+##時間条件分岐
+    function getTimeOfDay() {
+    // 現在時刻を取得
+    const now = new Date();
+    const hour = now.getHours(); // 時間を取得（24時間表記）
+
+    // 時間帯に応じて文字列を返す
+    if (hour >= 6 && hour < 12) {
+        return "morning"; // 6時から11時59分まで
+    } else if (hour >= 12 && hour < 18) {
+        return "afternoon"; // 12時から17時59分まで
+    } else {
+        return "night"; // 18時から翌朝5時59分まで
+    }
+}
+
+// 関数の使用例
+console.log(getTimeOfDay());
+
