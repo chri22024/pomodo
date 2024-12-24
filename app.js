@@ -26,8 +26,6 @@ var progressBar = document.querySelector('.progress-bar');
 
 // 質問フォーム入力
 var sleepHours = document.getElementById('sleep_hours');  // 数値入力 (例: 3〜10)
-const mentalState = document.querySelector('input[name="mental_state"]:checked');
-
 
 var bedtime = document.getElementById('bedtime');         // 質問 3, number: 0〜23
 var answer2 = document.getElementById('answer2');         // 質問 5, number: 0〜23
@@ -44,7 +42,7 @@ var timerModeElement = document.getElementById('timer-mode');
 var currentSetElement = document.getElementById('current-set');
 
 // タイマー設定 (作業+休憩の合計を30分と仮定)
-var totalTime = 30;
+var totalTime = 2;
 var workDuration = 0;
 var breakDuration = 0;
 
@@ -173,30 +171,42 @@ function checkFormCompletion() {
 }
 
 // 「作業を開始する」ボタンのクリックイベント
+// 消音状態を管理するフラグ
+let isMuted = false;
+
+// アラーム音の設定
+const alarmSound = new Audio('alarm.mp3');
+alarmSound.preload = 'auto';
+
+// 消音ボタンの作成と追加
+const muteButton = document.createElement('button');
+muteButton.id = 'mute-button';
+muteButton.textContent = '🔈'; // 初期状態は音あり
+muteButton.style.position = 'fixed';
+muteButton.style.top = '10px';
+muteButton.style.right = '10px';
+document.body.appendChild(muteButton);
+
+// 消音ボタンのクリックイベント
+muteButton.addEventListener('click', () => {
+    isMuted = !isMuted;
+    muteButton.textContent = isMuted ? '🔇' : '🔈'; // アイコンを切り替え
+});
+
+// 作業タイマー開始ボタンのクリックイベント
 startWorkButton.addEventListener('click', function () {
-    // sleepHours.value などをもとに動的に作業時間を計算
-    // 例として、メンタルと作業時間帯を考慮した既存ロジックを呼び出すことを想定
-    // (ここでは簡単に sleepHours だけ使用する)
-    workDuration = calculateTime(sleepHours.value, mentalState.value);
+    workDuration = calculateTime(sleepHours.value);
     breakDuration = totalTime - workDuration;
 
-    // 質問フォームを隠す
     formContainer.style.display = 'none';
-    // タイトルや画像を非表示
     content.style.display = 'none';
     imageContainer.style.display = 'none';
-
-    // タイマー画面を表示
     timerContainer.style.display = 'block';
-
-    // タイマー画面にスクロール
     timerContainer.scrollIntoView({ behavior: 'smooth' });
 
-    // セット数初期化
     setCount = 0;
     currentSetElement.textContent = `現在 ${setCount} セット目`;
 
-    // 作業タイマー開始
     startTimer(workDuration * 60, 'work');
 });
 
@@ -227,14 +237,18 @@ function startTimer(duration, mode) {
         }
         if (timeRemaining <= 0) {
             clearInterval(timerInterval);
+
+            // タイマー終了時にアラームを鳴らす（消音状態でない場合）
+            if (!isMuted) {
+                alarmSound.currentTime = 0;
+                alarmSound.play();
+            }
+
             if (mode === 'work') {
-                // 作業終了 → 休憩タイマー開始
                 startTimer(breakDuration * 60, 'break');
             } else {
-                // 休憩終了 → 1セット完了
                 setCount++;
                 currentSetElement.textContent = `現在 ${setCount} セット目`;
-                alert('1セット終了しました。');
             }
         }
     }, 1000);
@@ -270,6 +284,7 @@ resumeButton.addEventListener('click', function () {
     pauseButton.style.display = 'block';
 });
 
+
 // ===== 作業時間を計算するサンプル関数 =====
 
 // 実際には sleepHours.value, mentalState.value, workTime.value などを
@@ -278,7 +293,7 @@ function calculateTime(sleepTime, mental, time) {
     const sleepHours = sleepTime;
     const mentalState = mental;
     const workTime = time;
-    const concentrationBaseTime = 25;
+    const concentrationBaseTime = 1;
 
     let concentrationTime = concentrationBaseTime;
     let concentrationRate = 0;
