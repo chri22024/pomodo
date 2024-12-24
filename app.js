@@ -552,8 +552,8 @@ function calculateScoreExample() {
     return score;
 }
 
-##時間条件分岐
-    function getTimeOfDay() {
+// 時間帯を判定する関数
+function getTimeOfDay() {
     // 現在時刻を取得
     const now = new Date();
     const hour = now.getHours(); // 時間を取得（24時間表記）
@@ -568,6 +568,20 @@ function calculateScoreExample() {
     }
 }
 
-// 関数の使用例
-console.log(getTimeOfDay());
+// サンプルの calculateTime 関数
+function calculateTime(param1, param2, timeOfDay) {
+    console.log(`Param1: ${param1}, Param2: ${param2}, Time of Day: ${timeOfDay}`);
+}
+
+// ボタンのクリックイベント
+const startWorkButton = document.getElementById('startWorkButton');
+startWorkButton.addEventListener('click', function() {
+    // 他のパラメータ
+    const param1 = "start";
+    const param2 = "work";
+
+    // 第3引数に getTimeOfDay 関数の返り値を渡す
+    calculateTime(param1, param2, getTimeOfDay());
+});
+
 
