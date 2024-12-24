@@ -281,9 +281,9 @@ function setDateTime(){
         workTime = 'morngin';
     }else if(hour >= 12 && 20 > hour){
         workTime = 'afternoon';
-    }else(
+    }else{
         workTime = 'night';
-    )
+    }
 
     console.log(workTime);
     return hour;
