@@ -12,6 +12,7 @@ var images = [
 
 // 要素の取得
 var currentImageIndex = 0;
+var imageContainer = document.getElementById('image-container');
 var slideshowImage = document.getElementById('slideshow-image');
 var content = document.getElementById('content');
 var startButton = document.getElementById('start-button');
@@ -151,6 +152,11 @@ startWorkButton.addEventListener('click', function () {
 
     // フォームを隠す
     formContainer.style.display = 'none';
+    //タイトル画面も非表示にする
+    content.style.display = 'none';
+    //画像も隠しちゃう
+    imageContainer.style.display = 'none';
+
 
     // タイマー画面を表示
     timerContainer.style.display = 'block';
