@@ -288,6 +288,7 @@ function calculateTime(sleepTime, mental, time) {
     // console.log(mentalState);
     // console.log(workTime);
 
+    //sleepTime
     if(sleepHours > concentrationBaseTime){
         concentrationRate = -0.1;
     }else if(sleepHours > 5){
@@ -336,12 +337,23 @@ function calculateTime(sleepTime, mental, time) {
     console.log('workRate',workRate);
     concentrationTime -= concentrationBaseTime * workRate;
 
+    //psqiScore
+    const psqiScore = calculateScoreExample(); 
+    if (psqiScore < 6) {
+        psqiRate = 0;
+    } else {
+        psqiRate = 0.1;
+    }
+    console.log('psqiScore', psqiScore);
+    console.log('psqiRate', psqiRate);
+    concentrationTime -= concentrationBaseTime * psqiRate;
 
     return concentrationTime;
 
     // const resultElement = document.getElementById('result');
     // resultElement.textContent = `推奨作業時間: ${ (concentrationTime).toFixed(0)} 分、推奨休憩時間: ${breakTime.toFixed(0)} 分`;
 }
+
 function testCalculateTime() {
     const sleepTimeValues = [0, 3, 4, 6, 8, 10];
     const mentalStateValues = [1, 2, 3, 4, 5];
