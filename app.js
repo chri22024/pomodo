@@ -26,7 +26,7 @@ var progressBar = document.querySelector('.progress-bar');
 
 // 質問フォーム入力
 var sleepHours = document.getElementById('sleep_hours');  // 数値入力 (例: 3〜10)
-const mentalState = document.querySelector('input[name="answer1"]:checked');
+const mentalState = document.querySelector('input[name="mental_state"]:checked');
 
 
 var bedtime = document.getElementById('bedtime');         // 質問 3, number: 0〜23
