@@ -12,6 +12,7 @@ var images = [
 
 // 要素の取得
 var currentImageIndex = 0;
+var imageContainer = document.getElementById('image-container');
 var slideshowImage = document.getElementById('slideshow-image');
 var content = document.getElementById('content');
 var startButton = document.getElementById('start-button');
@@ -151,6 +152,11 @@ startWorkButton.addEventListener('click', function () {
 
     // フォームを隠す
     formContainer.style.display = 'none';
+    //タイトル画面も非表示にする
+    content.style.display = 'none';
+    //画像も隠しちゃう
+    imageContainer.style.display = 'none';
+
 
     // タイマー画面を表示
     timerContainer.style.display = 'block';
@@ -274,4 +280,159 @@ function calculateTime(sleepTime) {
         baseWorkTime = 10; // 最小10分
     }
     return baseWorkTime;
+}
+
+function calculateTimeInBed(bedtime, wakeupTime) {
+    // 床内時間を計算
+    if (bedtime <= wakeupTime) {
+        // 同じ日内
+        return wakeupTime - bedtime;
+    } else {
+        // 日付をまたぐ
+        return (24 - bedtime) + wakeupTime;
+    }
+}
+
+
+// ピッツバーグ睡眠質問票の点数を取得し合計を計算する関数
+function calculateScoreExample() {
+    let score = 0;
+    let score1 = 0;
+    let score2 = 0;
+    let score3 = 0;
+    let score4 = 0;
+    let score5 = 0;
+    let score6 = 0;
+    let score7 = 0;
+
+
+    // 質問の選択肢を取得
+    const answer1 = document.querySelector('input[name="answer1"]:checked');
+    const answer3 = document.querySelector('input[name="answer3"]:checked');
+    const answer4 = document.querySelector('input[name="answer4"]:checked');
+    const answer5 = document.querySelector('input[name="answer5"]:checked');
+    const answer6 = document.querySelector('input[name="answer6"]:checked');
+    const answer7 = document.querySelector('input[name="answer7"]:checked');
+    const answer8 = document.querySelector('input[name="answer8"]:checked');
+    const answer9 = document.querySelector('input[name="answer9"]:checked');
+    const answer10 = document.querySelector('input[name="answer10"]:checked');
+    const answer11 = document.querySelector('input[name="answer11"]:checked');
+    const answer12 = document.querySelector('input[name="answer12"]:checked');
+    const answer13 = document.querySelector('input[name="answer13"]:checked');
+    const answer14 = document.querySelector('input[name="answer14"]:checked');
+    const answer15 = document.querySelector('input[name="answer15"]:checked');
+    const answer16 = document.querySelector('input[name="answer16"]:checked');
+    const answer17 = document.querySelector('input[name="answer17"]:checked');
+
+    const answer2 = parseFloat(document.getElementById('answer2').value) || 0; // 入力されていない場合は0
+    const sleep_hours = parseFloat(document.getElementById('sleep_hours').value) || 0; // 入力されていない場合は0
+    const bedtime = parseFloat(document.getElementById('bedtime').value) || 0; // 入力されていない場合は0
+
+    // スコアを加算（選択されていない場合は0をデフォルトとする）
+
+    //c1
+    score1 += answer14 ? parseInt(answer14.value) : 0;
+
+    //c2
+    score2 += answer1 ? parseInt(answer1.value) : 0;
+    score2 += answer4 ? parseInt(answer4.value) : 0;
+
+    switch (true) {
+        case score2 === 0:
+            score2 = 0;
+            break;
+        case score2 >= 1 && score2 <= 2:
+            score2 = 1;
+            break;
+        case score2 >= 3 && score2 <= 4:
+            score2 = 2;
+            break;
+        case score2 >= 5 && score2 <= 6:
+            score2 = 3;
+            break;
+        default:
+            // 他の範囲に該当する場合の処理が必要ならここに書く
+            break;
+    }
+
+    //c3
+    score3 += answer3 ? parseInt(answer3.value) : 0;
+
+    //c4
+    const timeInBed = calculateTimeInBed(bedtime, answer2);
+    const sleepPercentage = (sleep_hours / timeInBed) * 100;
+
+    switch (true) {
+        case sleepPercentage >= 85:
+            score4 = 0; // 85%以上なら0点
+            break;
+        case sleepPercentage >= 75 && sleepPercentage < 85:
+            score4 = 1; // 75%以上85%未満なら1点
+            break;
+        case sleepPercentage >= 65 && sleepPercentage < 75:
+            score4 = 2; // 65%以上75%未満なら2点
+            break;
+        case sleepPercentage < 65:
+            score4 = 3; // 65%未満なら3点
+            break;
+        default:
+            // 範囲外のケースが発生した場合（念のため）
+            score4 = -1; // 不正な値の場合のエラー処理（オプション）
+            break;
+    }
+
+    //c5
+    score5 += answer5 ? parseInt(answer5.value) : 0;
+    score5 += answer6 ? parseInt(answer6.value) : 0;
+    score5 += answer7 ? parseInt(answer7.value) : 0;
+    score5 += answer8 ? parseInt(answer8.value) : 0;
+    score5 += answer9 ? parseInt(answer9.value) : 0;
+    score5 += answer10 ? parseInt(answer10.value) : 0;
+    score5 += answer11 ? parseInt(answer11.value) : 0;
+    score5 += answer12 ? parseInt(answer12.value) : 0;
+    score5 += answer13 ? parseInt(answer13.value) : 0;
+
+    switch (true) {
+        case (score5 === 0):
+            score5 = 0;
+            break;
+        case (score5 >= 1 && score5 <= 9):
+            score5 = 1;
+            break;
+        case (score5 >= 10 && score5 <= 18):
+            score5 = 2;
+            break;
+        case (score5 >= 19 && score5 <= 27):
+            score5 = 3;
+            break;
+    }
+
+    //c6
+    score6 += answer15 ? parseInt(answer15.value) : 0;
+
+    //c7
+    score7 += answer16 ? parseInt(answer16.value) : 0;
+    score7 += answer17 ? parseInt(answer17.value) : 0;
+
+    switch (true) {
+        case (score7 === 0):
+            score7 = 0;
+            break;
+        case (score7 >= 1 && score7 <= 2):
+            score7 = 1;
+            break;
+        case (score7 >= 3 && score7 <= 4):
+            score7 = 2;
+            break;
+        case (score7 >= 5 && score7 <= 6):
+            score7 = 3;
+            break;
+        default:
+            // その他の値が来た場合は特に処理しない
+            break;
+    }
+
+    score = score1 + score2 + score3 + score4 + score5 + score6 + score7;
+
+    return score;
 }
