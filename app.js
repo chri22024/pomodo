@@ -26,6 +26,8 @@ var progressBar = document.querySelector('.progress-bar');
 
 // 質問フォーム入力
 var sleepHours = document.getElementById('sleep_hours');  // 数値入力 (例: 3〜10)
+const mentalState = document.querySelector('input[name="answer1"]:checked');
+
 
 var bedtime = document.getElementById('bedtime');         // 質問 3, number: 0〜23
 var answer2 = document.getElementById('answer2');         // 質問 5, number: 0〜23
@@ -175,7 +177,7 @@ startWorkButton.addEventListener('click', function () {
     // sleepHours.value などをもとに動的に作業時間を計算
     // 例として、メンタルと作業時間帯を考慮した既存ロジックを呼び出すことを想定
     // (ここでは簡単に sleepHours だけ使用する)
-    workDuration = calculateTime(sleepHours.value);
+    workDuration = calculateTime(sleepHours.value, mentalState.value);
     breakDuration = totalTime - workDuration;
 
     // 質問フォームを隠す
