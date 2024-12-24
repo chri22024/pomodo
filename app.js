@@ -145,8 +145,10 @@ function checkFormCompletion() {
 
 // 「作業を開始する」ボタンのクリックイベント
 startWorkButton.addEventListener('click', function () {
+
+    setDateTime();
     // sleepHours.valueなどをもとに動的に作業時間を計算
-    workDuration = calculateTime(sleepHours.value, mentalState.value, workTime.value);
+    // workDuration = calculateTime(sleepHours.value, mentalState.value, workTime.value);
     breakDuration = totalTime - workDuration;
 
     // フォームを隠す
@@ -158,6 +160,8 @@ startWorkButton.addEventListener('click', function () {
 
     // タイマー画面にスクロール
     timerContainer.scrollIntoView({ behavior: 'smooth' });
+
+
 
     // セット数初期化
     setCount = 0;
@@ -263,6 +267,27 @@ modalOverlay.addEventListener('click', function () {
     settingsModal.style.display = 'none';
     modalOverlay.style.display = 'none';
 });
+
+
+function setDateTime(){
+    const now = new Date();
+    const hour = now.getHours();
+    const workTime = '';
+
+    console.log(hour);
+
+
+    if(hour >= 4 && 12 > hour){
+        workTime = 'morngin';
+    }else if(hour >= 12 && 20 > hour){
+        workTime = 'afternoon';
+    }else(
+        workTime = 'night';
+    )
+
+    console.log(workTime);
+    return hour;
+}
 
 // ===== 作業時間を計算するサンプル関数 =====
 // 実際には sleepHours.value, mentalState.value, workTime.value などを
