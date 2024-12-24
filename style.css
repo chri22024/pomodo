@@ -43,7 +43,7 @@ body {
 #pomodo-title {
     font-size: 100px;
     margin-bottom: 20px;
-    font-family: Impact;
+    font-family: Impact, sans-serif;
 }
 
 /* フォーム全体 */
@@ -51,8 +51,6 @@ body {
     margin: 100px auto;
     width: 80%;
     max-width: 600px;
-    /* はじめるボタンが押されるまで display: none にする場合は
-       HTML側に style="display: none;" を追加 */
 }
 
 .question {
@@ -61,8 +59,8 @@ body {
 
 /* 「作業を開始する」ボタン */
 #start-work-button {
-    display: none;            /* 初期は非表示。JavaScript で表示する */
-    margin: 30px auto 0 auto; /* ボタンを中央に配置 */
+    display: none;
+    margin: 30px auto 0 auto;
     text-align: center;
 }
 
@@ -78,7 +76,7 @@ button {
     height: 100vh;
     position: relative;
     text-align: center;
-    display: none; /* フォーム送信前は非表示 */
+    display: none;
 }
 
 #timer-content {
@@ -137,45 +135,6 @@ button {
     color: #008080;   /* 休憩中は青緑系 */
 }
 
-/* 設定ボタン */
-#settings-button {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 10px 15px;
-    font-size: 16px;
-    display: none;
-}
-
-/* 設定モーダル */
-#settings-modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 30px;
-    border: 1px solid #ccc;
-    z-index: 1000;
-}
-
-#modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-}
-
-input[type="number"] {
-    width: 50px;
-    margin-left: 10px;
-}
-
 /* 一時停止／再開ボタンを同じ位置に配置 */
 #pause-button,
 #resume-button {
@@ -191,3 +150,5 @@ input[type="number"] {
     font-size: 20px;
     font-weight: bold;
 }
+
+/* 「設定」関連ボタンやモーダルのスタイルは削除済み */

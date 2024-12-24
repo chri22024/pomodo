@@ -21,15 +21,15 @@ var startWorkButton = document.getElementById('start-work-button');
 var timerContainer = document.getElementById('timer-container');
 var timerText = document.getElementById('timer-text');
 var progressBar = document.querySelector('.progress-bar');
-var settingsButton = document.getElementById('settings-button');
-var settingsModal = document.getElementById('settings-modal');
-var modalOverlay = document.getElementById('modal-overlay');
-var saveSettingsButton = document.getElementById('save-settings-button');
-var workDurationInput = document.getElementById('work-duration');
-var breakDurationInput = document.getElementById('break-duration');
+
+// 「設定」関連は削除済み
 
 // 質問フォーム入力
-var sleepHours = document.getElementById('sleep_hours');
+var sleepHours = document.getElementById('sleep_hours');  // 数値入力 (例: 3〜10)
+
+var bedtime = document.getElementById('bedtime');         // 質問 3, number: 0〜23
+var answer2 = document.getElementById('answer2');         // 質問 5, number: 0〜23
+var reason   = document.getElementById('reason');         // 質問 7j (text) → 必須チェックから除外
 
 // 一時停止／再開ボタン
 var pauseButton = document.getElementById('pause-button');
@@ -41,19 +41,15 @@ var timerModeElement = document.getElementById('timer-mode');
 // 現在何セット目か
 var currentSetElement = document.getElementById('current-set');
 
-// タイマー設定
-var totalTime = 30; // (作業+休憩)の合計を30分と仮定
-var workDuration = 0;  // 実際にはユーザ入力で計算
+// タイマー設定 (作業+休憩の合計を30分と仮定)
+var totalTime = 30;
+var workDuration = 0;
 var breakDuration = 0;
 
 // 一時停止フラグ
 var isStop = 0;
-
-// 何セット完了したか
-var setCount = 0;
-
-// タイマー用
-var timerInterval;
+var setCount = 0;     // 何セット完了したか
+var timerInterval;    // タイマー用
 
 // ページ読み込み時にスライドショーを開始
 window.onload = function () {
@@ -92,27 +88,54 @@ startButton.addEventListener('click', function () {
 });
 
 // ==================== 入力チェック ====================
-// ラジオボタンや number 入力を総合的にチェックする
-// 全てのラジオグループ名 (name属性) をまとめる
+// 質問 7j のテキスト (reason) は必須にしない。代わりに回答頻度 (answer13) は必須。
+//
+// すべてのラジオグループ名 (必須) をまとめる
+// mental_state, work_time, answer1, answer3, answer4〜answer17 など
+//
+// ※ answer2, bedtime, sleep_hours などは数字入力なので別枠でチェック
+//    7jテキスト(reason)は必須ではないため除外
 var radioGroups = [
-  'answer1', 'answer2', 'answer3', 'answer4' // など必要な分
+  'mental_state',
+  'work_time',
+  'answer1',
+  'answer3',
+  'answer4',
+  'answer5',
+  'answer6',
+  'answer7',
+  'answer8',
+  'answer9',
+  'answer10',
+  'answer11',
+  'answer12',
+  'answer13',
+  'answer14',
+  'answer15',
+  'answer16',
+  'answer17'
 ];
-var allRadios = document.querySelectorAll('#form-container input[type="radio"]');
-var allNumberOrText = document.querySelectorAll('#form-container input[type="number"], #form-container input[type="text"]');
 
-// ラジオボタンには change イベント、テキスト/数値には input イベントを登録
-allRadios.forEach(function(r) {
-    r.addEventListener('change', checkFormCompletion);
+// ラジオボタン全取得
+var allRadios = document.querySelectorAll('#form-container input[type="radio"]');
+// 数値入力 => sleep_hours(2か所?), bedtime, answer2, etc.
+//   → ただし HTML で sleep_hours が2か所重複しないよう注意してください
+//   → 今回は ID がかぶるといけないので "sleep_hours" が1つだけ使われる想定にする
+var allNumbers = document.querySelectorAll('#form-container input[type="number"]');
+
+// イベントリスナー登録
+allRadios.forEach(function(radio) {
+    radio.addEventListener('change', checkFormCompletion);
 });
-allNumberOrText.forEach(function(nt) {
-    nt.addEventListener('input', checkFormCompletion);
+allNumbers.forEach(function(numInput) {
+    numInput.addEventListener('input', checkFormCompletion);
 });
 
 // フォームがすべて埋まっているかをチェックする関数
 function checkFormCompletion() {
     var allFilled = true;
 
-    // 1) ラジオグループごとに "どれか一つが選択されている" か確認
+    // 1) ラジオボタングループ (必須) がすべて選択されているか
     for (var i = 0; i < radioGroups.length; i++) {
         var groupName = radioGroups[i];
         var radios = document.getElementsByName(groupName);
@@ -129,12 +152,15 @@ function checkFormCompletion() {
         }
     }
 
-    // 2) number, text の入力チェック
-    allNumberOrText.forEach(function(el) {
-        if (!el.value) {
+    // 2) 数値入力 (必須) が入力されているか
+    //    例えば sleep_hours, bedtime, answer2 など
+    allNumbers.forEach(function(num) {
+        if (!num.value || num.value === '') {
             allFilled = false;
         }
     });
+
+    // 質問7j のテキスト (id="reason") は必須にしないのでチェックしない
 
     // 条件を満たせば「作業を開始する」ボタンを表示
     if (allFilled) {
@@ -146,21 +172,20 @@ function checkFormCompletion() {
 
 // 「作業を開始する」ボタンのクリックイベント
 startWorkButton.addEventListener('click', function () {
-    // sleepHours.valueなどをもとに動的に作業時間を計算
+    // sleepHours.value などをもとに動的に作業時間を計算
+    // 例として、メンタルと作業時間帯を考慮した既存ロジックを呼び出すことを想定
+    // (ここでは簡単に sleepHours だけ使用する)
     workDuration = calculateTime(sleepHours.value);
     breakDuration = totalTime - workDuration;
 
-    // フォームを隠す
+    // 質問フォームを隠す
     formContainer.style.display = 'none';
-    //タイトル画面も非表示にする
+    // タイトルや画像を非表示
     content.style.display = 'none';
-    //画像も隠しちゃう
     imageContainer.style.display = 'none';
-
 
     // タイマー画面を表示
     timerContainer.style.display = 'block';
-    settingsButton.style.display = 'block';
 
     // タイマー画面にスクロール
     timerContainer.scrollIntoView({ behavior: 'smooth' });
@@ -176,7 +201,7 @@ startWorkButton.addEventListener('click', function () {
 // タイマー開始
 function startTimer(duration, mode) {
     var timeRemaining = duration;
-    var totalDuration = duration; // プログレスバーの計算用に保持
+    var totalDuration = duration;
 
     // モード表示を更新
     if (mode === 'work') {
@@ -198,7 +223,6 @@ function startTimer(duration, mode) {
             updateTimerDisplay(timeRemaining);
             updateProgressBar(timeRemaining, totalDuration);
         }
-
         if (timeRemaining <= 0) {
             clearInterval(timerInterval);
             if (mode === 'work') {
@@ -208,8 +232,6 @@ function startTimer(duration, mode) {
                 // 休憩終了 → 1セット完了
                 setCount++;
                 currentSetElement.textContent = `現在 ${setCount} セット目`;
-
-                // 必要に応じて再度作業タイマーを呼ぶ or 終了する
                 alert('1セット終了しました。');
             }
         }
@@ -226,7 +248,7 @@ function updateTimerDisplay(seconds) {
 // プログレスバーを更新
 function updateProgressBar(timeRemaining, totalDuration) {
     var progress = timeRemaining / totalDuration;
-    var circumference = 2 * Math.PI * 90; // 半径90の円の周
+    var circumference = 2 * Math.PI * 90;
     var offset = circumference * (1 - progress);
     progressBar.style.strokeDasharray = circumference;
     progressBar.style.strokeDashoffset = offset;
@@ -246,27 +268,8 @@ resumeButton.addEventListener('click', function () {
     pauseButton.style.display = 'block';
 });
 
-// 設定ボタン
-settingsButton.addEventListener('click', function () {
-    settingsModal.style.display = 'block';
-    modalOverlay.style.display = 'block';
-});
-
-// 設定モーダル保存ボタン
-saveSettingsButton.addEventListener('click', function () {
-    workDuration = parseInt(workDurationInput.value) || 10;
-    breakDuration = parseInt(breakDurationInput.value) || 5;
-    settingsModal.style.display = 'none';
-    modalOverlay.style.display = 'none';
-});
-
-// モーダル外クリックで閉じる
-modalOverlay.addEventListener('click', function () {
-    settingsModal.style.display = 'none';
-    modalOverlay.style.display = 'none';
-});
-
 // ===== 作業時間を計算するサンプル関数 =====
+
 // 実際には sleepHours.value, mentalState.value, workTime.value などを
 // 使って、より複雑に演算してください
 function calculateTime(sleepTime, mental, time) {
