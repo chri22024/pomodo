@@ -9,8 +9,6 @@ var images = [
     'pictures/7.jpg',
     'pictures/8.jpg'
 ];
-
-// 要素の取得
 var currentImageIndex = 0;
 var slideshowImage = document.getElementById('slideshow-image');
 var content = document.getElementById('content');
@@ -253,6 +251,10 @@ saveSettingsButton.addEventListener('click', function () {
     settingsModal.style.display = 'none';
     modalOverlay.style.display = 'none';
 });
+
+
+
+
 
 // モーダル外クリックで閉じる
 modalOverlay.addEventListener('click', function () {
