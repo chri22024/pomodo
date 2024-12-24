@@ -269,17 +269,99 @@ modalOverlay.addEventListener('click', function () {
 // ===== 作業時間を計算するサンプル関数 =====
 // 実際には sleepHours.value, mentalState.value, workTime.value などを
 // 使って、より複雑に演算してください
-function calculateTime(sleepTime) {
-    var baseWorkTime = 25; // 作業時間(分)
-    var sVal = parseFloat(sleepTime) || 5;
-    // 例: 睡眠時間が短いほど作業時間を短くする → 単純な例
-    if (sVal < 5) {
-        baseWorkTime -= 5;
+function calculateTime(sleepTime, mental, time) {
+    const sleepHours = sleepTime;
+    const mentalState = mental;
+    const workTime = time;
+    const concentrationBaseTime = 25;
+
+    let concentrationTime = concentrationBaseTime;
+    let concentrationRate = 0;
+    var mentalStateRate = 0;
+    let workRate = 0.0;
+    let totalRate = 0.0;
+
+
+    // 3つの項目から作業時間を計算
+
+    // console.log(sleepTime);
+    // console.log(mentalState);
+    // console.log(workTime);
+
+    if(sleepHours > concentrationBaseTime){
+        concentrationRate = -0.1;
+    }else if(sleepHours > 5){
+        concentrationRate = 0
+    }else if(sleepHours > 3){
+        concentrationRate = 0.03;
+    }else{
+        concentrationRate = 0.1;
     }
-    if (baseWorkTime < 10) {
-        baseWorkTime = 10; // 最小10分
+    console.log(concentrationRate);
+
+
+    concentrationTime -= concentrationBaseTime * concentrationRate;
+
+    // mentalState
+    if (mentalState == 5) {
+        mentalStateRate = 0.2;
+    } else if (mentalState == 4) {
+        mentalStateRate = 0.1;
+    } else if (mentalState == 3) {
+        mentalStateRate = 0;
+    } else if (mentalState == 2) {
+        mentalStateRate = -0.1;
+    } else if (mentalState == 1) {
+        mentalStateRate = -0.2;
     }
-    return baseWorkTime;
+
+
+
+    console.log('mentalState', mentalState);
+    console.log('mentalStateRate', mentalStateRate);
+    concentrationTime -= -concentrationBaseTime * mentalStateRate;
+
+    // workTime
+    switch(workTime) {
+        case 'morning':
+            workRate =  0.15;
+            break;
+        case 'afternoon':
+            workRate = 0.05;
+            break;
+        case 'night':
+            workRate = 0;
+            break;
+    }
+    console.log('workRate',workRate);
+    concentrationTime -= concentrationBaseTime * workRate;
+
+
+    return concentrationTime;
+
+    // const resultElement = document.getElementById('result');
+    // resultElement.textContent = `推奨作業時間: ${ (concentrationTime).toFixed(0)} 分、推奨休憩時間: ${breakTime.toFixed(0)} 分`;
+}
+function testCalculateTime() {
+    const sleepTimeValues = [0, 3, 4, 6, 8, 10];
+    const mentalStateValues = [1, 2, 3, 4, 5];
+    const workTimeValues = ['morning', 'afternoon', 'night'];
+
+    const results = [];
+
+    for (const sleepTime of sleepTimeValues) {
+        for (const mental of mentalStateValues) {
+            for (const time of workTimeValues) {
+                const concentrationTime = calculateTime(sleepTime, mental, time);
+                results.push({
+                    sleepTime,
+                    mental,
+                    time,
+                    concentrationTime: concentrationTime.toFixed(2),
+                });
+            }
+        }
+    }
 }
 
 function calculateTimeInBed(bedtime, wakeupTime) {
