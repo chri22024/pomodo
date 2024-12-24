@@ -249,6 +249,7 @@ function startTimer(duration, mode) {
             } else {
                 setCount++;
                 currentSetElement.textContent = `現在 ${setCount} セット目`;
+                startTimer(workDuration * 60, 'work')
             }
         }
     }, 1000);
