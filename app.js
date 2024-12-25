@@ -102,7 +102,6 @@ startButton.addEventListener('click', function () {
 //    7jテキスト(reason)は必須ではないため除外
 var radioGroups = [
   'mental_state',
-  'work_time',
   'answer1',
   'answer3',
   'answer4',
