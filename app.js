@@ -27,6 +27,7 @@ var progressBar = document.querySelector('.progress-bar');
 // 質問フォーム入力
 var sleepHours = document.getElementById('sleep_hours');  // 数値入力 (例: 3〜10)
 var mentalState = document.getElementsByName('mental_state');   // 質問 1, number: 1〜5
+var work_time = "";
 // var mentalValue = getCheckedValue(mentalState);
 console.log(getCheckedValue(mentalState));
 
@@ -200,8 +201,10 @@ muteButton.addEventListener('click', () => {
 // 作業タイマー開始ボタンのクリックイベント
 startWorkButton.addEventListener('click', function () {
 
+    work_time = getTimeOfDay();
+    console.log("work_time", work_time);
     var mentalValue = getCheckedValue(mentalState);
-    workDuration = calculateTime(sleepHours.value, mentalValue, "morning");
+    workDuration = calculateTime(sleepHours.value, mentalValue, work_time);
     breakDuration = totalTime - workDuration;
 
     testCalculateTime();
