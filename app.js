@@ -365,6 +365,7 @@ function calculateTime(sleep, mental, work) {
     console.log('workRate',workRate);
     concentrationTime -= concentrationBaseTime * workRate;
 
+    console.log("concentrationTime only sleep mental work", concentrationTime);
     //psqiScore
     const psqiScore = calculateScoreExample(); 
     if (psqiScore < 6) {
