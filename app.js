@@ -27,6 +27,7 @@ var progressBar = document.querySelector('.progress-bar');
 // 質問フォーム入力
 var sleepHours = document.getElementById('sleep_hours');  // 数値入力 (例: 3〜10)
 var mentalState = document.getElementsByName('mental_state');   // 質問 1, number: 1〜5
+// var mentalValue = getCheckedValue(mentalState);
 console.log(getCheckedValue(mentalState));
 
 var bedtime = document.getElementById('bedtime');         // 質問 3, number: 0〜23
@@ -198,8 +199,12 @@ muteButton.addEventListener('click', () => {
 
 // 作業タイマー開始ボタンのクリックイベント
 startWorkButton.addEventListener('click', function () {
-    workDuration = calculateTime(sleepHours.value, mentalState.value, "morning");
+
+    var mentalValue = getCheckedValue(mentalState);
+    workDuration = calculateTime(sleepHours.value, mentalValue, "morning");
     breakDuration = totalTime - workDuration;
+
+    testCalculateTime();
 
     formContainer.style.display = 'none';
     content.style.display = 'none';
@@ -293,17 +298,15 @@ resumeButton.addEventListener('click', function () {
 
 // 実際には sleepHours.value, mentalState.value, workTime.value などを
 // 使って、より複雑に演算してください
-function calculateTime(sleepTime, mental, time) {
-    const sleepHours = sleepTime;
-    const mentalState = mental;
-    const workTime = time;
-    const concentrationBaseTime = 1;
+function calculateTime(sleep, mental, work) {
+    console.log(sleep, mental, work);
+    const concentrationBaseTime = 25;
+    const baseSleepTime = 8;
 
     let concentrationTime = concentrationBaseTime;
     let concentrationRate = 0;
     var mentalStateRate = 0;
     let workRate = 0.0;
-    let totalRate = 0.0;
 
 
     // 3つの項目から作業時間を計算
@@ -313,11 +316,11 @@ function calculateTime(sleepTime, mental, time) {
     // console.log(workTime);
 
     //sleepTime
-    if(sleepHours > concentrationBaseTime){
+    if( sleep > baseSleepTime){
         concentrationRate = -0.1;
-    }else if(sleepHours > 5){
+    }else if(sleep > 5){
         concentrationRate = 0
-    }else if(sleepHours > 3){
+    }else if(sleep > 3){
         concentrationRate = 0.03;
     }else{
         concentrationRate = 0.1;
@@ -328,26 +331,26 @@ function calculateTime(sleepTime, mental, time) {
     concentrationTime -= concentrationBaseTime * concentrationRate;
 
     // mentalState
-    if (mentalState == 5) {
+    if (mental == 5) {
         mentalStateRate = 0.2;
-    } else if (mentalState == 4) {
+    } else if (mental == 4) {
         mentalStateRate = 0.1;
-    } else if (mentalState == 3) {
+    } else if (mental == 3) {
         mentalStateRate = 0;
-    } else if (mentalState == 2) {
+    } else if (mental == 2) {
         mentalStateRate = -0.1;
-    } else if (mentalState == 1) {
+    } else if (mental == 1) {
         mentalStateRate = -0.2;
     }
 
 
 
-    console.log('mentalState', mentalState);
+    console.log('mental', mental);
     console.log('mentalStateRate', mentalStateRate);
     concentrationTime -= -concentrationBaseTime * mentalStateRate;
 
     // workTime
-    switch(workTime) {
+    switch(work) {
         case 'morning':
             workRate =  0.15;
             break;
@@ -358,6 +361,7 @@ function calculateTime(sleepTime, mental, time) {
             workRate = 0;
             break;
     }
+    console.log('work',work);
     console.log('workRate',workRate);
     concentrationTime -= concentrationBaseTime * workRate;
 
@@ -372,6 +376,7 @@ function calculateTime(sleepTime, mental, time) {
     console.log('psqiRate', psqiRate);
     concentrationTime -= concentrationBaseTime * psqiRate;
 
+    console.log("concentrationTime", concentrationTime);
     return concentrationTime;
 
     // const resultElement = document.getElementById('result');
@@ -388,6 +393,7 @@ function getCheckedValue(radio){
         }
     }
 
+    console.log(selectedValue);
     return selectedValue;
 }
 
