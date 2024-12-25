@@ -26,6 +26,8 @@ var progressBar = document.querySelector('.progress-bar');
 
 // 質問フォーム入力
 var sleepHours = document.getElementById('sleep_hours');  // 数値入力 (例: 3〜10)
+var mentalState = document.getElementsByName('mental_state');   // 質問 1, number: 1〜5
+console.log(getCheckedValue(mentalState));
 
 var bedtime = document.getElementById('bedtime');         // 質問 3, number: 0〜23
 var answer2 = document.getElementById('answer2');         // 質問 5, number: 0〜23
@@ -83,6 +85,7 @@ function shiftImageRight() {
 
 // 「はじめる」ボタンを押したら質問フォームを表示
 startButton.addEventListener('click', function () {
+    // workDuration = calculateTime(sleepHours.value, mentalState.value, "morning");
     formContainer.style.display = 'block';
     formContainer.scrollIntoView({ behavior: 'smooth' });
 });
@@ -195,7 +198,7 @@ muteButton.addEventListener('click', () => {
 
 // 作業タイマー開始ボタンのクリックイベント
 startWorkButton.addEventListener('click', function () {
-    workDuration = calculateTime(sleepHours.value);
+    workDuration = calculateTime(sleepHours.value, mentalState.value, "morning");
     breakDuration = totalTime - workDuration;
 
     formContainer.style.display = 'none';
@@ -375,6 +378,19 @@ function calculateTime(sleepTime, mental, time) {
     // resultElement.textContent = `推奨作業時間: ${ (concentrationTime).toFixed(0)} 分、推奨休憩時間: ${breakTime.toFixed(0)} 分`;
 }
 
+function getCheckedValue(radio){
+    var selectedValue = null;
+
+    for (const i of radio) {
+        if (i.checked) {
+            selectedValue = i.value;
+            break;
+        }
+    }
+
+    return selectedValue;
+}
+
 function testCalculateTime() {
     const sleepTimeValues = [0, 3, 4, 6, 8, 10];
     const mentalStateValues = [1, 2, 3, 4, 5];
@@ -552,8 +568,8 @@ function calculateScoreExample() {
     return score;
 }
 
-##時間条件分岐
-    function getTimeOfDay() {
+// ##時間条件分岐
+function getTimeOfDay() {
     // 現在時刻を取得
     const now = new Date();
     const hour = now.getHours(); // 時間を取得（24時間表記）
