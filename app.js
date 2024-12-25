@@ -7,7 +7,7 @@ var images = [
     'pictures/5.jpg',
     'pictures/6.jpg',
     'pictures/7.jpg',
-    'pictures/8.jpg'
+    'pictures/8.jpg'　
 ];
 
 // 要素の取得
