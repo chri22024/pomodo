@@ -417,6 +417,7 @@ function testCalculateTime() {
             }
         }
     }
+    console.table(results);
 }
 
 function calculateTimeInBed(bedtime, wakeupTime) {
